@@ -1,0 +1,80 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Length",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Length",
+					"value": "10"
+				}
+			},
+			{
+				"name": "Breadth",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Breadth",
+					"value": "20"
+				}
+			},
+			{
+				"name": "Area",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Length",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Breadth",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Area",
+					"value": {
+						"value": "@{mul(int(variables(\n'length'\n)),int(variables(\n'breadth'\n)))}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Length": {
+				"type": "String"
+			},
+			"Breadth": {
+				"type": "String"
+			},
+			"Area": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Pipeline Activities/Set variable"
+		},
+		"annotations": []
+	}
+}
