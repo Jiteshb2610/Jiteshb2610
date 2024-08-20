@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select * from [dbo].[users]\nwhere country = 'India'",
+						"sqlReaderQuery": "select * from [dbo].[usersjb]\nwhere country = 'India'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
