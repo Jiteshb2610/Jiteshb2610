@@ -1,5 +1,5 @@
 {
-	"name": "pipeline7",
+	"name": "Paasing as a variable",
 	"properties": {
 		"activities": [
 			{
@@ -17,17 +17,84 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select * from [dbo].[usersjb]\nwhere country = 'India'",
+						"sqlReaderQuery": "SELECT TOP 5 * from usersJB where country='India'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "DS_AzureSQL_Users",
 						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Append variable1",
+							"type": "AppendVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "filename",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Allfilename",
+					"value": {
+						"value": "@variables('filename')",
+						"type": "Expression"
 					}
 				}
 			}
 		],
+		"variables": {
+			"filename": {
+				"type": "Array"
+			},
+			"Allfilename": {
+				"type": "Array"
+			}
+		},
 		"annotations": []
 	}
 }
