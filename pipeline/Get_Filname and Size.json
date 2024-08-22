@@ -1,5 +1,5 @@
 {
-	"name": "pipeline6",
+	"name": "Get_Filname and Size",
 	"properties": {
 		"activities": [
 			{
@@ -62,9 +62,18 @@
 							"typeProperties": {
 								"dataset": {
 									"referenceName": "DS_azurestorageacctraining_PARAMETERIZED",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"FilenameDS": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
 								},
-								"fieldList": [],
+								"fieldList": [
+									"itemName",
+									"size"
+								],
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"enablePartitionDiscovery": false
@@ -78,6 +87,14 @@
 				}
 			}
 		],
+		"variables": {
+			"FilenamewithSIze": {
+				"type": "Array"
+			},
+			"FinalOutput": {
+				"type": "Array"
+			}
+		},
 		"annotations": []
 	}
 }
