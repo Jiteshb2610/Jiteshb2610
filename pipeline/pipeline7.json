@@ -57,7 +57,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Web1').output",
+						"value": "@activity('Set variable1').value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -67,19 +67,49 @@
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "ResponseOutput",
+								"variableName": "Name",
 								"value": {
-									"value": "@item()",
+									"value": "@item().name",
 									"type": "Expression"
 								}
 							}
 						}
 					]
 				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "AllNames",
+					"value": {
+						"value": "@variables('Name')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
 			"ResponseOutput": {
+				"type": "Array"
+			},
+			"Name": {
+				"type": "Array"
+			},
+			"AllNames": {
 				"type": "Array"
 			}
 		},
