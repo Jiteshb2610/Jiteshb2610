@@ -16,13 +16,27 @@
 						"referenceName": "AzureSqlTable2",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "Order"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable3",
+						"type": "DatasetReference"
+					},
+					"name": "Customers"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable4",
+						"type": "DatasetReference"
+					},
+					"name": "Details"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "DelimitedText2",
+						"referenceName": "DelimitedText3",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -33,7 +47,10 @@
 					"name": "join1"
 				},
 				{
-					"name": "select1"
+					"name": "join3"
+				},
+				{
+					"name": "join4"
 				}
 			],
 			"scriptLines": [
@@ -55,20 +72,55 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
-				"Employee, source1 join(Employee@employee_id == source1@employee_id,",
+				"     format: 'table') ~> Order",
+				"source(output(",
+				"          customer_id as integer,",
+				"          name as string,",
+				"          dob as date,",
+				"          email as string,",
+				"          gender as string,",
+				"          country as string,",
+				"          region as string,",
+				"          city as string,",
+				"          asset as integer,",
+				"          marital_status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Customers",
+				"source(output(",
+				"          order_detail_id as integer,",
+				"          order_id as integer,",
+				"          product_id as integer,",
+				"          customer_id as integer,",
+				"          quantity_sold as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Details",
+				"Employee, Order join(Employee@employee_id == Order@employee_id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
-				"join1 select(mapColumn(",
-				"          employee_id = Employee@employee_id,",
-				"          order_date",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"Order, Details join(Order@order_id == @order_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join3, Customers join(@customer_id == Customers@customer_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join4",
+				"join4 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          employee_id as string,",
+				"          order_date as string",
+				"     ),",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
